@@ -21,7 +21,7 @@ def logging_level(log):
 
 #Tracing Instructions
 def hook_code(mu, address, size, user_data):
-    print(">>> Tracing instruction at 0x%x, instruction size = 0x%x" %(address, size))
+    print ">>> Tracing instruction at 0x%x, instruction size = 0x%x" %(address, size)
     utils.dump_regs(mu, address, size)
 
 #Initializing registers
@@ -48,7 +48,8 @@ def ret_program_headers(elf, addr, vaddr, memsz, filesz, offset, logger):
     for phdr in elf.PhdrTable:
         for _, segment_value in elfconstants.elf_segment_types:
             if phdr.p_type.value == segment_value:
-                logger.debug(_ + ":" + str(hex(phdr.p_paddr.value)) + ":" +str(hex(phdr.p_memsz.value)))
+                logger.debug(_ + ":" + str(hex(phdr.p_paddr.value)) + ":" +
+                             str(hex(phdr.p_memsz.value)))
                 addr.append(phdr.p_paddr.value)
                 vaddr.append(phdr.p_vaddr.value)
                 memsz.append(phdr.p_memsz.value)
@@ -61,7 +62,7 @@ def mmap(mu, aligned_addr, aligned_size, logger):
         for i in xrange(len(aligned_addr)):
             mu.mem_map(aligned_addr[i], aligned_size[i])
             logger.debug(hex(aligned_addr[i]) + ":" + hex(aligned_size[i]))
-        mu.mem_map(0x00007ffffffde000 , 0x21000)
+        mu.mem_map(0x00007ffffffde000, 0x21000)
         mu.mem_map(0x1000000, 0x30000)
     except unicorn.unicorn.UcError:
         logger.error("Invalid argument (UC_ERR_ARG)")
@@ -140,7 +141,8 @@ def main():
 
     #utils.dump_at_addr(mu, 0x400ce0, 0x10, logger)
 
-    mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, elf.elfHdr.e_entry.value, elf.elfHdr.e_entry.value + 40)
+    mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, elf.elfHdr.e_entry.value,
+                elf.elfHdr.e_entry.value + 40)
 
     logger.info("Emulating")
     mu.emu_start(elf.elfHdr.e_entry.value, elf.elfHdr.e_entry.value + 40)
