@@ -1,4 +1,4 @@
-# README #
+# r00tEmu #
 
 Tool to emulate binaries of different architectures and do binary analysis. Developed using pylibelf+unicorn.
 
