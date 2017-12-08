@@ -46,8 +46,7 @@ def dump_mapping(mu, addr, size):
     memhex = str(mu.mem_read(addr, size)).encode('hex')
     f.write(memhex + "\n")
 
-def dump_at_addr(mu, addr, length):
-    print "Dumping the mapping at the address: " + str(hex(addr)) + ", length: " + str(hex(length))
+def dump_at_addr(mu, addr, length, logger):
+    logger.debug("Dumping the mapping at the address: " + str(hex(addr)) + ", length: " + str(hex(length)))
     memhex = str(mu.mem_read(addr, length)).encode('hex')
-    print memhex
-
+    logger.debug(memhex)
