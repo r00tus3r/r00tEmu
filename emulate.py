@@ -69,18 +69,21 @@ def mmap(mu, aligned_addr, aligned_size, logger):
         exit(0)
 
 #Reading from the elf file and then writing into the memory mapped area
-def mwrite(mu, elf, offset, memsz, vaddr, logger):
+def mwrite(mu, elf, offset, filesz, vaddr, logger):
     for i in xrange(len(offset)):
-        data = elf.readDataAtOffset(offset[i], memsz[i])
+        data = elf.readDataAtOffset(offset[i], filesz[i])
         logger.debug(hex(vaddr[i]))
         mu.mem_write(vaddr[i], data)
-        utils.dump_mapping(mu, vaddr[i], memsz[i])
+        utils.dump_mapping(mu, vaddr[i], filesz[i])
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Name of file to be emulated")
-    parser.add_argument("-log", default=None, choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], help="Preffered logging level")
+    parser.add_argument("-log", default=None,
+                        choices=["DEBUG", "INFO", "WARNING",
+                                 "ERROR", "CRITICAL"],
+                        help="Preffered logging level")
     args = parser.parse_args()
     FORMAT = "[%(filename)s:%(lineno)s - %(funcName)s() ] %(message)s"
     logging.basicConfig(format=FORMAT, level=logging_level(args.log))
@@ -98,7 +101,7 @@ def main():
     ret_program_headers(elf, addr, vaddr, memsz, filesz, offset, logger)
 
     roundoff_addr = lambda val: val if val % 4096 == 0 else ((val/4096)*4096)
-    roundoff_size = lambda val: val if val % 4096 == 0 else ((val/4096)*4096 + 4096)
+    roundoff_size = lambda val: val if val % 4096 == 0 else ((val/4096)*4096 + 2*4096)
 
     logger.info("Rounding off the Vaddr and Memsz")
     aligned_addr.append(roundoff_addr(vaddr[0]))
@@ -113,7 +116,8 @@ def main():
             if aligned_addr[j] == tmp_addr:
                 flag = 1
                 if vaddr[i] + memsz[i] > aligned_addr[j] + aligned_size[j]:
-                    tmp_sz = roundoff_size((tmp_addr + memsz[i]) - (aligned_addr[j] + aligned_size[j]))
+                    tmp_sz = roundoff_size((tmp_addr + memsz[i]) -
+                                           (aligned_addr[j] + aligned_size[j]))
                     aligned_size[j] += tmp_sz
                 break
         if flag == 0:
@@ -126,23 +130,25 @@ def main():
     mmap(mu, aligned_addr, aligned_size, logger)
 
     logger.info("Writing into the memory mapped area at their respective offsets")
-    mwrite(mu, elf, offset, memsz, vaddr, logger)
+    mwrite(mu, elf, offset, filesz, vaddr, logger)
 
-    logger.info("Retrieving the different sections and also writing into memory")
+    '''logger.info("Retrieving the different sections and also writing into memory")
     for sec in elf.ShdrTable:
-        logger.debug(sec.sectionName + ":" + str(hex(sec.sh_addr.value)) + ":" + str(hex(sec.sh_size.value)))
+        logger.debug(sec.sectionName + ":" + str(hex(sec.sh_addr.value)) +
+                     ":" + str(hex(sec.sh_size.value)))
         if sec.sh_addr.value == 0x0:
             continue
         data = elf.readDataAtOffset(sec.sh_offset.value, sec.sh_size.value)
-        mu.mem_write(sec.sh_addr.value, data)
+        mu.mem_write(sec.sh_addr.value, data)'''
 
     logger.info("Initializing registers")
     init_reg(mu)
 
-    #utils.dump_at_addr(mu, 0x400ce0, 0x10, logger)
+    utils.dump_at_addr(mu, 0x400ce0, 0x100, logger)
 
     mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, elf.elfHdr.e_entry.value,
                 elf.elfHdr.e_entry.value + 40)
+    #mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, 0x00000000004009b0, 0x00000000004009c8)
 
     logger.info("Emulating")
     mu.emu_start(elf.elfHdr.e_entry.value, elf.elfHdr.e_entry.value + 40)

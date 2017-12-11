@@ -42,11 +42,13 @@ def dump_regs(mu, address, size):
 
 def dump_mapping(mu, addr, size):
     f = open("dump_mappings", "a+")
-    f.write("Dumping the mapping at the address: " + str(hex(addr)) + ", size: " + str(hex(size)) + "\n")
+    f.write("Dumping the mapping at the address: " + str(hex(addr)) +
+            ", size: " + str(hex(size)) + "\n")
     memhex = str(mu.mem_read(addr, size)).encode('hex')
     f.write(memhex + "\n")
 
 def dump_at_addr(mu, addr, length, logger):
-    logger.debug("Dumping the mapping at the address: " + str(hex(addr)) + ", length: " + str(hex(length)))
+    logger.debug("Dumping the mapping at the address: " + str(hex(addr)) +
+                 ", length: " + str(hex(length)))
     memhex = str(mu.mem_read(addr, length)).encode('hex')
     logger.debug(memhex)
