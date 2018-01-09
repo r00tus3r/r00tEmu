@@ -1,6 +1,5 @@
 import pylibelf
 import unicorn
-import elfconstants
 import logging
 import unicorn.x86_const
 import argparse
@@ -33,7 +32,7 @@ def init_reg(mu):
     mu.reg_write(unicorn.x86_const.UC_X86_REG_RSI, 0x0)
     mu.reg_write(unicorn.x86_const.UC_X86_REG_RDI, 0x0)
     mu.reg_write(unicorn.x86_const.UC_X86_REG_RBP, 0x0)
-    mu.reg_write(unicorn.x86_const.UC_X86_REG_RSP, 0x7fffffffb000)
+    mu.reg_write(unicorn.x86_const.UC_X86_REG_RSP, 0x7fffffffe0a0)
     mu.reg_write(unicorn.x86_const.UC_X86_REG_R8, 0x0)
     mu.reg_write(unicorn.x86_const.UC_X86_REG_R9, 0x0)
     mu.reg_write(unicorn.x86_const.UC_X86_REG_R10, 0x0)
@@ -46,7 +45,7 @@ def init_reg(mu):
 #Retrieving the program header details
 def ret_program_headers(elf, addr, vaddr, memsz, filesz, offset, logger):
     for phdr in elf.PhdrTable:
-        for _, segment_value in elfconstants.elf_segment_types:
+        for _, segment_value in pylibelf.elfconstants.elf_segment_types:
             if phdr.p_type.value == segment_value:
                 logger.debug(_ + ":" + str(hex(phdr.p_paddr.value)) + ":" +
                              str(hex(phdr.p_memsz.value)))
@@ -63,7 +62,9 @@ def mmap(mu, aligned_addr, aligned_size, logger):
             mu.mem_map(aligned_addr[i], aligned_size[i])
             logger.debug(hex(aligned_addr[i]) + ":" + hex(aligned_size[i]))
         mu.mem_map(0x00007ffffffde000, 0x21000)
-        mu.mem_map(0x1000000, 0x30000)
+        mu.mem_map(0x00007ffff7ffd000, 0x2000)
+	mu.mem_map(0x00007ffff7ffb000, 0x2000)
+	mu.mem_map(0xffffffffff600000, 0x1000)
     except unicorn.unicorn.UcError:
         logger.error("Invalid argument (UC_ERR_ARG)")
         exit(0)
