@@ -62,9 +62,6 @@ def mmap(mu, aligned_addr, aligned_size, logger):
             mu.mem_map(aligned_addr[i], aligned_size[i])
             logger.debug(hex(aligned_addr[i]) + ":" + hex(aligned_size[i]))
         mu.mem_map(0x00007ffffffde000, 0x21000)
-        mu.mem_map(0x00007ffff7ffd000, 0x2000)
-	mu.mem_map(0x00007ffff7ffb000, 0x2000)
-	mu.mem_map(0xffffffffff600000, 0x1000)
     except unicorn.unicorn.UcError:
         logger.error("Invalid argument (UC_ERR_ARG)")
         exit(0)
