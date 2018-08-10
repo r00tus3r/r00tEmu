@@ -1,6 +1,6 @@
 # r00tEmu
 
-An emulation toolto do dynamic binary analysis. Developed using [Unicorn Engine](https://github.com/unicorn-engine/unicorn) and [Pylibelf](https://github.com/crackinglandia/pylibelf).
+An emulation tool to do dynamic binary analysis. Developed using [Unicorn Engine](https://github.com/unicorn-engine/unicorn) and [Pylibelf](https://github.com/crackinglandia/pylibelf).
 
 ### Features:
 * Supports basic x64 ELF programs
