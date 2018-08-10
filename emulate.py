@@ -144,14 +144,19 @@ def main():
 
     utils.dump_at_addr(mu, 0x400ce0, 0x100, logger)
 
-    mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, elf.elfHdr.e_entry.value,
-                elf.elfHdr.e_entry.value + 40)
-    #mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, 0x00000000004009b0, 0x00000000004009c8)
+    start = int(raw_input("Start emulation at address:"), 16)
+    end = int(raw_input("End emulation at address:"), 16)
+
+    #mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, elf.elfHdr.e_entry.value,
+    #            elf.elfHdr.e_entry.value + 40)
+    mu.hook_add(unicorn.UC_HOOK_CODE, hook_code, None, start, end)
 
     logger.info("Emulating")
-    mu.emu_start(elf.elfHdr.e_entry.value, elf.elfHdr.e_entry.value + 40)
-    #mu.emu_start(0x00000000004009b0, 0x00000000004009c8)
+    #mu.emu_start(elf.elfHdr.e_entry.value, elf.elfHdr.e_entry.value + 40)
+    mu.emu_start(start, end)
 
+    logger.info("Dump of registers can be found at ./dump_regs")
+    logger.info("Dump of memory mappings can be found at ./dump_mappings")
     logger.info("Finished")
 
 if __name__ == "__main__":
