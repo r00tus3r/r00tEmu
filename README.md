@@ -1,19 +1,16 @@
-# r00tEmu #
+# r00tEmu
 
-Tool to emulate binaries of different architectures and do binary analysis. Developed using pylibelf+unicorn.
+An emulation toolto do dynamic binary analysis. Developed using [Unicorn Engine](https://github.com/unicorn-engine/unicorn) and [Pylibelf](https://github.com/crackinglandia/pylibelf).
 
-It is a fun project I am working on. It can do the following and more when it is fully complete:
+### Features:
+* Supports basic x64 ELF programs
+* Trace instructions
+* Dump memory mappings and register values
+* Given an address and length, outputs a hexdump
+* Print program and section header info
 
-1. Trace instructions
-2. Trace syscalls
-3. Trace memory accesses
+### ToDo:
+* Trace library calls, syscalls and memory accesses
+* Add ARM support and emulate ARM busybox
 
-The utility functions will help:
-
-1. Dump memory mappings
-2. Dump register values
-3. Given a address and a length, do a hexdump of the bytes there
-
-It is still a work in progress. When complete, it will be useful for debugging and analysing binaries of different architectures.
-
-I try work on it whenever I am free.
+It is still a work in progress. When complete, it will be useful for emulating and analysing binaries of different architectures.
